@@ -1,8 +1,6 @@
 use serde::{Serialize, Deserialize};
 use serde_json::Value as JsonValue;
 
-use crate::lib::config::prelude::*;
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DiscordState {
     pub details: String,

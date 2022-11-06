@@ -41,8 +41,8 @@ impl DiscordRpc {
 
         let id = params.id.to_string();
         let mut args = vec!("-a", id.trim());
-        let mut start_string: String;
-        let mut end_string: String;
+        let start_string: String;
+        let end_string: String;
 
         if let Some(details) = &params.details {
             args.extend(["-d", details]);
@@ -86,7 +86,7 @@ impl DiscordRpc {
 
     pub fn stop(&mut self) {
         if !&self.process.is_none() {
-            &self.process.as_mut().unwrap().kill().unwrap();
+            let _ = &self.process.as_mut().unwrap().kill().unwrap();
         }
 
         ()
