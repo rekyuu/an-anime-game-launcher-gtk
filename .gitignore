@@ -4,3 +4,4 @@
 /scripts/builds
 /scripts/appimage/dist
 /scripts/appimage/*.AppImage
+/.idea

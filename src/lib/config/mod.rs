@@ -23,6 +23,7 @@ pub mod launcher;
 pub mod game;
 pub mod patch;
 pub mod resolution;
+pub mod discord;
 
 pub mod prelude {
     pub use super::launcher::prelude::*;
@@ -30,6 +31,7 @@ pub mod prelude {
 
     pub use super::patch::Patch;
     pub use super::resolution::Resolution;
+    pub use super::discord::Discord;
 }
 
 use prelude::*;
@@ -134,7 +136,8 @@ pub fn flush() -> anyhow::Result<()> {
 pub struct Config {
     pub launcher: Launcher,
     pub game: Game,
-    pub patch: Patch
+    pub patch: Patch,
+    pub discord: Discord
 }
 
 impl Config {
@@ -204,6 +207,11 @@ impl From<&JsonValue> for Config {
             patch: match value.get("patch") {
                 Some(value) => Patch::from(value),
                 None => default.patch
+            },
+
+            discord: match value.get("discord") {
+                Some(value) => Discord::from(value),
+                None => default.discord
             }
         }
     }
