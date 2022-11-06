@@ -1,9 +1,8 @@
 use std::process::{Child, Command};
-use crate::lib;
 
 #[derive(Clone)]
 pub struct DiscordParams {
-    pub id: Option<u64>,
+    pub id: u64,
     pub details: Option<String>,
     pub state: Option<String>,
     pub icons: Option<DiscordIcons>,
@@ -22,7 +21,6 @@ pub struct DiscordTime {
     pub end: Option<u64>
 }
 
-#[derive(Clone)]
 pub struct DiscordRpc {
     params: Option<DiscordParams>,
     process: Option<Child>
@@ -41,44 +39,56 @@ impl DiscordRpc {
     pub fn update_rpc(&mut self, params: DiscordParams) {
         self.stop();
 
-        let cmd = Command::new("./public/discord-rpc/discord-rpc")
-            .arg("-a").arg(params.id);
+        let id = params.id.to_string();
+        let mut args = vec!("-a", id.trim());
+        let mut start_string: String;
+        let mut end_string: String;
 
         if let Some(details) = &params.details {
-            cmd.arg("-d").arg(details);
+            args.extend(["-d", details]);
         }
 
         if let Some(state) = &params.state {
-            cmd.arg("-s").arg(state);
+            args.extend(["-s", state]);
         }
 
         if let Some(icons) = &params.icons {
             if let Some(large_icon) = &icons.large {
-                cmd.arg("-li").arg(large_icon);
+                args.extend(["-li", large_icon]);
             }
 
             if let Some(small_icon) = &icons.small {
-                cmd.arg("-si").arg(small_icon);
+                args.extend(["-si", small_icon]);
             }
         }
 
         if let Some(time) = &params.time {
+
             if let Some(start) = &time.start {
-                cmd.arg("-st").arg(start);
+                start_string = start.to_string();
+                args.extend(["-st", start_string.trim()]);
             }
 
             if let Some(end) = &time.end {
-                cmd.arg("-et").arg(end);
+                end_string = end.to_string();
+                args.extend(["-et", end_string.trim()]);
             }
         }
 
+        let cmd = Command::new("./public/discord-rpc/discord-rpc")
+            .args(args)
+            .spawn()
+            .unwrap();
+
         self.params = Some(params.clone());
-        self.process = Some(cmd.spawn()?);
+        self.process = Some(cmd);
     }
 
     pub fn stop(&mut self) {
-        if self.process != None {
-            self.process.kill()?
+        if !&self.process.is_none() {
+            &self.process.as_mut().unwrap().kill().unwrap();
         }
+
+        ()
     }
 }

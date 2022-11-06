@@ -66,15 +66,15 @@ impl From<&JsonValue> for DiscordState {
 
         Self {
             details: match value.get("details") {
-                Some(value) => value.as_string().unwrap_or(default.details),
+                Some(value) => value.as_str().unwrap_or(default.details.as_str()).to_string(),
                 None => default.details
             },
             state: match value.get("state") {
-                Some(value) => value.as_string().unwrap_or(default.state),
+                Some(value) => value.as_str().unwrap_or(default.state.as_str()).to_string(),
                 None => default.state
             },
             icon: match value.get("icon") {
-                Some(value) => value.as_string().unwrap_or(default.icon),
+                Some(value) => value.as_str().unwrap_or(default.icon.as_str()).to_string(),
                 None => default.icon
             }
         }
